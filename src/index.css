@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --yt-red: #FF0000;
+    --bg-main: #0F0F0F;
+    --border-main: #303030;
+  }
+
+  body {
+    @apply bg-bg-main text-text-main font-barlow;
+    margin: 0;
+    padding: 0;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border-main rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-bg-quaternary;
+  }
+}
+
+@layer components {
+  .yt-btn {
+    @apply bg-yt-red text-white uppercase font-bold text-xs py-2.5 px-5 rounded-sm transition-all hover:bg-yt-red-dark hover:shadow-[0_4px_24px_rgba(255,0,0,0.2)];
+  }
+
+  .yt-btn-ghost {
+    @apply bg-transparent text-text-secondary border border-border-main uppercase font-semibold text-[11px] py-2 px-4 rounded-sm transition-all hover:border-text-tertiary hover:text-text-main;
+  }
+
+  .nav-item {
+    @apply flex items-center gap-4 px-4 py-2.5 cursor-pointer transition-colors text-text-secondary font-semibold text-sm relative hover:bg-bg-tertiary hover:text-text-main;
+  }
+
+  .nav-item.active {
+    @apply text-text-main;
+  }
+
+  .nav-item.active::before {
+    content: '';
+    @apply absolute left-0 top-1 bottom-1 w-[3px] bg-yt-red rounded-r-sm;
+  }
+
+  .glass-card {
+    @apply bg-bg-secondary border border-border-subtle rounded transition-all hover:border-border-main;
+  }
+}
