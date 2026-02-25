@@ -26,10 +26,17 @@ export const AuthProvider = ({ children }) => {
     const value = {
         signUp: (data) => supabase.auth.signUp(data),
         signIn: (data) => supabase.auth.signInWithPassword(data),
+        signInWithGoogle: () => supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: window.location.origin
+            }
+        }),
         signOut: () => supabase.auth.signOut(),
         user,
         role: user?.user_metadata?.role || 'admin', // Default to admin for now if metadata is missing
     };
+
 
     return (
         <AuthContext.Provider value={value}>
