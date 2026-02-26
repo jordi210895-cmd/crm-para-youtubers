@@ -16,10 +16,7 @@ const COLORS = [
 ];
 
 export default function BrainstormCanvas() {
-    const [ideas, setIdeas] = useState([
-        { id: 1, text: 'Mi setup 2025: Minimalismo Extremo', color: COLORS[0], x: 100, y: 150 },
-        { id: 2, text: 'Review de las nuevas gafas de Apple', color: COLORS[1], x: 400, y: 200 },
-    ]);
+    const [ideas, setIdeas] = useState([]);
 
     const addIdea = () => {
         const newIdea = {

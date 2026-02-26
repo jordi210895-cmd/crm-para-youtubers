@@ -4,7 +4,8 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Roles Enum
-CREATE TYPE user_role AS ENUM ('admin', 'editor', 'brand');
+-- Roles Enum
+CREATE TYPE user_role AS ENUM ('admin', 'editor', 'brand', 'creador');
 
 -- Users Table
 CREATE TABLE users (
@@ -92,7 +93,27 @@ CREATE TABLE brainstorm_ideas (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Row Level Security (RLS) Policies (Conceptual)
 -- ADMIN: Full access
 -- EDITOR: Can see/edit videos, scripts, assets. Cannot see financial data (revenue_deal, invoices).
 -- BRAND: Can only see their own brand data, associated video scripts (read-only), and invoices.
+
+-- Function to handle new user registration
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO public.users (id, email, full_name, avatar_url, role)
+    VALUES (
+        NEW.id,
+        NEW.email,
+        NEW.raw_user_meta_data->>'full_name',
+        NEW.raw_user_meta_data->>'avatar_url',
+        COALESCE(NEW.raw_user_meta_data->>'role', 'admin')::user_role
+    );
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Trigger to call the function on signup
+CREATE TRIGGER on_auth_user_created
+    AFTER INSERT ON auth.users
+    FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();

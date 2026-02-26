@@ -1,143 +1,172 @@
-import React from 'react';
-import {
-    BarChart,
-    Users,
-    Eye,
-    Activity,
-    Youtube,
-    Share2,
-    TrendingUp,
-    Globe,
-    PieChart,
-    Calendar
-} from 'lucide-react';
+import React, { useState, Component } from 'react';
+import { Youtube, RefreshCw, BarChart2, Users, Eye, Activity, AlertTriangle } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
+// 1. ERROR BOUNDARY
+// Esto evita que toda la pantalla se ponga negra si algo falla dentro de Analytics
+class AnalyticsErrorBoundary extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { hasError: false, error: null };
+    }
+
+    static getDerivedStateFromError(error) {
+        return { hasError: true, error };
+    }
+
+    componentDidCatch(error, errorInfo) {
+        console.error("Error capturado en Analytics:", error, errorInfo);
+    }
+
+    render() {
+        if (this.state.hasError) {
+            return (
+                <div className="p-8 h-full flex items-center justify-center animate-fade-up">
+                    <div className="glass-card p-8 border-yt-red/30 bg-yt-red/5 max-w-md w-full text-center">
+                        <AlertTriangle size={48} className="text-yt-red mx-auto mb-4" />
+                        <h2 className="text-xl font-bold text-text-main mb-2">Error al cargar datos</h2>
+                        <p className="text-xs text-text-secondary mb-4">
+                            Ha ocurrido un problema inesperado al mostrar las analíticas.
+                        </p>
+                        <p className="text-[10px] text-text-tertiary font-jetbrains break-all bg-bg-main p-2 rounded">
+                            {this.state.error?.toString()}
+                        </p>
+                    </div>
+                </div>
+            );
+        }
+        return this.props.children;
+    }
+}
+
+// 2. COMPONENTE PRINCIPAL (SOLO LÓGICA DE ESTADO)
 export default function AnalyticsDashboard() {
     return (
-        <div className="p-8 space-y-8 animate-fade-up">
-            {/* Header */}
-            <div className="flex justify-between items-end">
-                <div>
-                    <h2 className="text-2xl font-barlow-condensed font-black uppercase tracking-tighter text-text-main">
-                        Channel <span className="text-yt-red">Analytics</span>
-                    </h2>
-                    <p className="text-xs text-text-tertiary mt-1">Sincronizado con YouTube Data API • Hace 4 min</p>
-                </div>
-                <button className="yt-btn flex items-center gap-2">
-                    <Share2 size={14} /> Compartir Media Kit
-                </button>
-            </div>
-
-            {/* Real-time Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <StatCard icon={<Users className="text-yt-red" />} label="Subscriptores" value="248,392" trend="+1,204 hoy" />
-                <StatCard icon={<Eye className="text-blue-500" />} label="Vistas (28d)" value="1,248,304" trend="+14.2%" />
-                <StatCard icon={<Activity className="text-green-500" />} label="Engagement Rate" value="8.4%" trend="+0.5%" />
-                <StatCard icon={<Calendar className="text-purple-500" />} label="Videos Publicados" value="12" trend="Este mes" />
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Main Chart Simulation */}
-                <div className="lg:col-span-2 glass-card p-6 flex flex-col min-h-[400px]">
-                    <div className="flex items-center justify-between mb-8">
-                        <h3 className="text-xs font-black uppercase tracking-widest text-text-secondary flex items-center gap-2">
-                            <BarChart size={16} className="text-yt-red" /> Rendimiento de Vistas
-                        </h3>
-                        <div className="flex gap-2">
-                            {['7D', '28D', '90D', '1Y'].map(t => (
-                                <button key={t} className={`text-[9px] font-black uppercase px-2 py-1 rounded ${t === '28D' ? 'bg-bg-tertiary text-text-main' : 'text-text-tertiary'}`}>
-                                    {t}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="flex-1 flex items-end gap-2 px-4 pb-4">
-                        {Array.from({ length: 28 }).map((_, i) => {
-                            const height = 20 + Math.random() * 80;
-                            return (
-                                <div
-                                    key={i}
-                                    className={`flex-1 rounded-t-sm transition-all duration-500 hover:bg-yt-red cursor-pointer ${i === 24 ? 'bg-yt-red shadow-[0_0_12px_rgba(255,0,0,0.4)]' : 'bg-bg-quaternary'}`}
-                                    style={{ height: `${height}%` }}
-                                />
-                            );
-                        })}
-                    </div>
-                    <div className="flex justify-between mt-4 text-[9px] font-jetbrains text-text-tertiary uppercase tracking-widest px-2">
-                        <span>01 Feb</span>
-                        <span>15 Feb</span>
-                        <span>28 Feb</span>
-                    </div>
-                </div>
-
-                {/* Audience Breakdown */}
-                <div className="space-y-6">
-                    <div className="glass-card p-6">
-                        <h3 className="text-xs font-black uppercase tracking-widest text-text-secondary mb-6 flex items-center gap-2">
-                            <Globe size={16} /> Principales Geografías
-                        </h3>
-                        <div className="space-y-4">
-                            {[
-                                { country: 'España', pct: 42, color: 'bg-yt-red' },
-                                { country: 'México', pct: 28, color: 'bg-blue-500' },
-                                { country: 'Argentina', pct: 15, color: 'bg-green-500' },
-                                { country: 'Otros', pct: 15, color: 'bg-bg-quaternary' },
-                            ].map((item, i) => (
-                                <div key={i} className="space-y-1.5">
-                                    <div className="flex justify-between text-[10px] font-bold text-text-main uppercase tracking-tight">
-                                        <span>{item.country}</span>
-                                        <span>{item.pct}%</span>
-                                    </div>
-                                    <div className="h-1.5 bg-bg-tertiary rounded-full overflow-hidden">
-                                        <div className={`h-full ${item.color}`} style={{ width: `${item.pct}%` }} />
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="glass-card p-6">
-                        <h3 className="text-xs font-black uppercase tracking-widest text-text-secondary mb-6 flex items-center gap-2">
-                            <PieChart size={16} /> Demografía de Edad
-                        </h3>
-                        <div className="flex items-center justify-around py-4">
-                            <div className="relative w-24 h-24 rounded-full border-8 border-bg-tertiary flex items-center justify-center">
-                                <div className="absolute inset-0 rounded-full border-8 border-yt-red border-t-transparent border-r-transparent transform rotate-45" />
-                                <span className="text-sm font-black text-text-main">18-34</span>
-                            </div>
-                            <div className="space-y-2">
-                                <div className="flex items-center gap-2 text-[10px] font-bold text-text-main">
-                                    <div className="w-2 h-2 rounded-full bg-yt-red" /> 18-24 (45%)
-                                </div>
-                                <div className="flex items-center gap-2 text-[10px] font-bold text-text-main">
-                                    <div className="w-2 h-2 rounded-full bg-blue-500" /> 25-34 (38%)
-                                </div>
-                                <div className="flex items-center gap-2 text-[10px] font-bold text-text-main">
-                                    <div className="w-2 h-2 rounded-full bg-bg-quaternary" /> Otros (17%)
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <AnalyticsErrorBoundary>
+            <AnalyticsContent />
+        </AnalyticsErrorBoundary>
     );
 }
 
-function StatCard({ icon, label, value, trend }) {
-    return (
-        <div className="glass-card p-5 group">
-            <div className="flex justify-between items-start mb-4">
-                <div className="p-2 bg-bg-tertiary rounded group-hover:bg-bg-quaternary transition-colors">
-                    {icon}
+// 3. CONTENIDO REAL (Protegido por el Error Boundary)
+function AnalyticsContent() {
+    // Usamos catch para evitar que el destructuring rompa si auth falla
+    const auth = useAuth() || {};
+    const signInWithGoogle = auth.signInWithGoogle;
+    const user = auth.user;
+
+    const [isConnecting, setIsConnecting] = useState(false);
+
+    // LÓGICA DE VERIFICACIÓN ESTRICTA
+    // Solo asumimos que está conectado si existe el user Y tiene el objeto youtube_stats
+    const ytStats = user?.user_metadata?.youtube_stats;
+    const isConnected = !!ytStats;
+
+    const handleConnect = async () => {
+        if (!signInWithGoogle) {
+            alert("El servicio de autenticación no está disponible en este momento.");
+            return;
+        }
+
+        setIsConnecting(true);
+        try {
+            await signInWithGoogle();
+        } catch (error) {
+            console.error('Error connecting YouTube:', error);
+            alert('Error al conectar con YouTube. Revisa la consola.');
+        } finally {
+            setIsConnecting(false);
+        }
+    };
+
+    // VISTA 1: NO CONECTADO (Botón grande)
+    if (!isConnected) {
+        return (
+            <div className="h-full min-h-[70vh] flex flex-col items-center justify-center p-8 animate-fade-up">
+                <div className="max-w-md w-full glass-card p-12 text-center space-y-8 border-2 border-yt-red/10">
+                    <div className="w-24 h-24 bg-yt-red/10 rounded-full flex items-center justify-center mx-auto mb-2 border border-yt-red/20">
+                        <Youtube size={48} className="text-yt-red" />
+                    </div>
+
+                    <div className="space-y-3">
+                        <h2 className="text-3xl font-barlow-condensed font-black uppercase tracking-tighter text-text-main leading-none">
+                            Conecta tu <span className="text-yt-red">Canal</span>
+                        </h2>
+                        <p className="text-sm text-text-secondary leading-relaxed">
+                            Aún no has vinculado tu cuenta de YouTube. Conéctala para ver tus estadísticas reales aquí.
+                        </p>
+                    </div>
+
+                    <button
+                        onClick={handleConnect}
+                        disabled={isConnecting}
+                        className="w-full py-6 flex items-center justify-center gap-3 bg-yt-red hover:bg-yt-red-dark text-white rounded font-black text-lg uppercase tracking-tight transition-all active:scale-95"
+                    >
+                        {isConnecting ? (
+                            <RefreshCw size={24} className="animate-spin" />
+                        ) : (
+                            <Youtube size={24} />
+                        )}
+                        {isConnecting ? 'Conectando...' : 'Conectar con YouTube'}
+                    </button>
+
+                    <p className="text-[10px] text-text-tertiary uppercase tracking-widest font-bold">
+                        Requiere permisos de solo lectura (youtube.readonly)
+                    </p>
                 </div>
-                <TrendingUp size={14} className="text-text-tertiary group-hover:text-yt-red transition-colors" />
             </div>
-            <div className="text-2xl font-black font-barlow-condensed uppercase tracking-tighter text-text-main mb-1 leading-none">{value}</div>
-            <div className="text-[10px] font-black uppercase tracking-widest text-text-tertiary mb-2">{label}</div>
-            <div className={`text-[9px] font-bold font-jetbrains ${trend.startsWith('+') ? 'text-green-500' : 'text-text-tertiary'}`}>
-                {trend}
+        );
+    }
+
+    // VISTA 2: CONECTADO (Con Optional Chaining extremo)
+    return (
+        <div className="p-8 space-y-8 animate-fade-up">
+            <header className="flex justify-between items-end border-b border-border-subtle pb-6">
+                <div>
+                    <h2 className="text-3xl font-barlow-condensed font-black uppercase tracking-tighter text-text-main">
+                        Channel <span className="text-yt-red">Analytics</span>
+                    </h2>
+                    <p className="text-xs text-text-tertiary mt-1 uppercase tracking-widest font-bold">Resumen de rendimiento en tiempo real</p>
+                </div>
+            </header>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="glass-card p-6">
+                    <div className="flex items-center gap-3 mb-2 text-yt-red">
+                        <Users size={16} />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-text-tertiary">Suscriptores</span>
+                    </div>
+                    <div className="text-3xl font-black font-barlow-condensed uppercase tracking-tighter text-text-main">
+                        {ytStats?.subscriberCount ? Number(ytStats?.subscriberCount).toLocaleString() : "—"}
+                    </div>
+                </div>
+
+                <div className="glass-card p-6">
+                    <div className="flex items-center gap-3 mb-2 text-blue-500">
+                        <Eye size={16} />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-text-tertiary">Vistas Totales</span>
+                    </div>
+                    <div className="text-3xl font-black font-barlow-condensed uppercase tracking-tighter text-text-main">
+                        {ytStats?.viewCount ? Number(ytStats?.viewCount).toLocaleString() : "—"}
+                    </div>
+                </div>
+
+                <div className="glass-card p-6">
+                    <div className="flex items-center gap-3 mb-2 text-green-500">
+                        <Activity size={16} />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-text-tertiary">Videos Publicados</span>
+                    </div>
+                    <div className="text-3xl font-black font-barlow-condensed uppercase tracking-tighter text-text-main">
+                        {ytStats?.videoCount ? Number(ytStats?.videoCount).toLocaleString() : "—"}
+                    </div>
+                </div>
+            </div>
+
+            <div className="glass-card p-12 text-center border-dashed">
+                <BarChart2 size={32} className="text-text-tertiary/20 mx-auto mb-4" />
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-text-tertiary">
+                    Las gráficas detalladas se cargarán cuando haya suficientes datos históricos.
+                </p>
             </div>
         </div>
     );

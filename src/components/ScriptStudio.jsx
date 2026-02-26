@@ -18,9 +18,7 @@ const BLOCK_TYPES = [
     { id: 'cta', label: 'CTA', color: 'border-l-purple-500' },
 ];
 
-const INITIAL_BLOCKS = [
-    { id: 1, type: 'hook', text: '', notes: '', time: 0 },
-];
+const INITIAL_BLOCKS = [];
 
 export default function ScriptStudio({ brandBrief }) {
     const [blocks, setBlocks] = useState(INITIAL_BLOCKS);
@@ -169,12 +167,12 @@ export default function ScriptStudio({ brandBrief }) {
                     <div>
                         <span className="text-[10px] font-black uppercase text-text-tertiary block mb-2 tracking-widest">Marca</span>
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded bg-blue-500/20 border border-blue-500/30 flex items-center justify-center font-black text-blue-400">
-                                N
+                            <div className="w-10 h-10 rounded bg-gray-500/10 border border-gray-500/20 flex items-center justify-center font-black text-gray-500">
+                                ?
                             </div>
                             <div>
-                                <div className="text-sm font-bold text-text-main">NordVPN</div>
-                                <div className="text-[10px] font-jetbrains font-bold text-yt-red uppercase tracking-tight">Vence en 3 días</div>
+                                <div className="text-sm font-bold text-text-main">Sin Marca</div>
+                                <div className="text-[10px] font-jetbrains font-bold text-text-tertiary uppercase tracking-tight">Sin briefing activo</div>
                             </div>
                         </div>
                     </div>
@@ -182,31 +180,14 @@ export default function ScriptStudio({ brandBrief }) {
                     <div className="space-y-4">
                         <span className="text-[10px] font-black uppercase text-text-tertiary block tracking-widest">Requisitos Obligatorios</span>
                         <ul className="space-y-3">
-                            {[
-                                'Mencionar garantía de devolución de 30 días.',
-                                'Mostrar la interfaz de la App en pantalla.',
-                                'Usar el link en la primera línea de la descripción.',
-                                'Explicar el beneficio de seguridad en WiFi público.',
-                                'CTA final enfocado en el cupón "JUANTECH".'
-                            ].map((req, i) => (
-                                <li key={i} className="flex gap-3 text-xs text-text-secondary leading-relaxed">
-                                    <div className="mt-0.5"><CheckCircle size={14} className="text-text-tertiary" /></div>
-                                    {req}
-                                </li>
-                            ))}
+                            <li className="text-[10px] text-text-tertiary italic">No hay requisitos definidos para este guion.</li>
                         </ul>
                     </div>
 
                     <div className="pt-6 border-t border-border-subtle">
                         <span className="text-[10px] font-black uppercase text-text-tertiary block mb-3 tracking-widest">Archivos del Deal</span>
                         <div className="space-y-2">
-                            <div className="p-3 bg-bg-tertiary/50 border border-border-subtle rounded group cursor-pointer hover:border-text-tertiary transition-colors flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                    <Play size={14} className="text-yt-red" />
-                                    <span className="text-xs font-semibold text-text-main">contrato_v2.pdf</span>
-                                </div>
-                                <maximize size={12} className="text-text-tertiary" />
-                            </div>
+                            <div className="text-[10px] text-text-tertiary italic">No hay archivos vinculados.</div>
                         </div>
                     </div>
                 </div>

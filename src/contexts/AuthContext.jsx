@@ -26,12 +26,21 @@ export const AuthProvider = ({ children }) => {
     const value = {
         signUp: (data) => supabase.auth.signUp(data),
         signIn: (data) => supabase.auth.signInWithPassword(data),
-        signInWithGoogle: () => supabase.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-                redirectTo: window.location.origin
-            }
-        }),
+        signInWithGoogle: () => {
+            console.log('Attempting Google Sign In with Redirect:', window.location.origin);
+            return supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: window.location.origin,
+                    queryParams: {
+                        access_type: 'offline',
+                        prompt: 'consent',
+                        hd: '*'
+                    },
+                    scopes: 'https://www.googleapis.com/auth/youtube.readonly'
+                }
+            });
+        },
         signOut: () => supabase.auth.signOut(),
         user,
         role: user?.user_metadata?.role || 'admin', // Default to admin for now if metadata is missing

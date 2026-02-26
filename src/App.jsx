@@ -48,11 +48,7 @@ export default function App() {
       case 'scripts':
         return <ScriptStudio />;
       case 'sponsors':
-        return <SponsorPortal scriptBlocks={[
-          { type: 'Hook', text: '¿Sabías que el 90% de los creadores fallan por no tener las herramientas adecuadas? Hoy te presento 10 herramientas de IA que cambiarán tu vida.' },
-          { type: 'Intro', text: 'Bienvenidos a un nuevo video. Soy Juan y hoy vamos a optimizar tu flujo de trabajo de una vez por todas.' },
-          { type: 'Sponsor', text: 'Pero antes, un mensaje de nuestro patrocinador: NordVPN. Protégete en línea y accede a contenido global con un solo clic.' }
-        ]} />;
+        return <SponsorPortal scriptBlocks={[]} />;
       case 'finance':
         return <FinanceManager />;
       case 'assets':
@@ -93,10 +89,10 @@ export default function App() {
         {isSidebarOpen && (activeTab !== 'sponsors' && activeTab !== 'ideas' && activeTab !== 'scripts') && (
           <div className="m-4 p-4 bg-bg-secondary border border-border-subtle rounded animate-fade-up shrink-0">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-yt-red to-yt-red-dark flex items-center justify-center text-white font-black">JR</div>
+              <div className="w-10 h-10 rounded-full bg-bg-tertiary flex items-center justify-center text-text-tertiary font-black">?</div>
               <div>
-                <div className="text-xs font-bold leading-tight">JuanTech</div>
-                <div className="text-[10px] text-text-tertiary font-jetbrains uppercase">248K Subs</div>
+                <div className="text-xs font-bold leading-tight">Mi Canal</div>
+                <div className="text-[10px] text-text-tertiary font-jetbrains uppercase">Sin suscrip.</div>
               </div>
             </div>
           </div>
@@ -154,8 +150,8 @@ export default function App() {
                 <Bell size={20} />
                 <span className="absolute -top-1 -right-1 w-2 h-2 bg-yt-red rounded-full border-2 border-bg-main"></span>
               </button>
-              <div className="w-8 h-8 rounded-full bg-bg-secondary border border-border-subtle flex items-center justify-center cursor-pointer overflow-hidden border-2 border-yt-red/20 group hover:border-yt-red transition-all">
-                <div className="w-full h-full bg-gradient-to-br from-yt-red to-yt-red-dark flex items-center justify-center text-[10px] font-black text-white">JR</div>
+              <div className="w-8 h-8 rounded-full bg-bg-secondary border border-border-subtle flex items-center justify-center cursor-pointer overflow-hidden group hover:border-yt-red transition-all">
+                <div className="w-full h-full bg-bg-tertiary flex items-center justify-center text-[10px] font-black text-text-tertiary">?</div>
               </div>
             </div>
           </header>

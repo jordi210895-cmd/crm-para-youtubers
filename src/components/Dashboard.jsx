@@ -11,40 +11,9 @@ import {
     AlertCircle
 } from 'lucide-react';
 
-const VIDEOS = [
-    {
-        title: "10 AI tools que cambiarán tu workflow en 2025",
-        emoji: "🤖",
-        views: "284K",
-        duration: "18:42",
-        status: "editing",
-        statusLabel: "Editando",
-        sponsor: "Notion",
-        progress: 70,
-        revenue: "$2,200",
-        daysLeft: 8,
-        color: "from-blue-900 to-bg-secondary"
-    },
-    {
-        title: "Construí mi PC gaming con $800 y fue una locura",
-        emoji: "🎮",
-        views: "—",
-        duration: "24:15",
-        status: "scripting",
-        statusLabel: "Guionando",
-        sponsor: "NordVPN",
-        progress: 35,
-        revenue: "$3,200",
-        daysLeft: 3,
-        color: "from-red-900 to-bg-secondary"
-    },
-];
+const VIDEOS = [];
 
-const DEALS = [
-    { brand: "NordVPN", logo: "N", logoColor: "text-blue-400", stage: "Producción", deal: "$3,200", urgent: true, urgentDays: 3 },
-    { brand: "Skillshare", logo: "S", logoColor: "text-green-400", stage: "Negociando", deal: "$2,800", urgent: false },
-    { brand: "Notion", logo: "No", logoColor: "text-white", stage: "Producción", deal: "$2,200", urgent: false },
-];
+const DEALS = [];
 
 const STAGE_STYLE = {
     Negociando: "bg-yellow-500/10 text-yellow-500",
@@ -62,7 +31,7 @@ export default function Dashboard() {
                         Dashboard de <span className="text-yt-red">Creador</span>
                     </h1>
                     <p className="text-xs text-text-tertiary mt-1">
-                        Bienvenido de nuevo, Juan — <span className="text-yellow-500 font-bold">NordVPN vence en 3 días ⚡</span>
+                        Bienvenido de nuevo — <span className="text-gray-500 font-bold">No hay alertas pendientes ⚡</span>
                     </p>
                 </div>
                 <button className="yt-btn flex items-center gap-2">
@@ -72,10 +41,10 @@ export default function Dashboard() {
 
             {/* KPI Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <KpiCard icon={<DollarSign className="text-green-500" />} label="Ingresos" value="$24,500" sub="+32% vs Q4" trend="up" />
-                <KpiCard icon={<Play className="text-yt-red" />} label="Videos" value="4" sub="2 con sponsor" />
-                <KpiCard icon={<Users className="text-blue-500" />} label="Deals" value="7" sub="$13,700 pendiente" />
-                <KpiCard icon={<Eye className="text-purple-500" />} label="Vistas" value="1.2M" sub="+14% este mes" trend="up" />
+                <KpiCard icon={<DollarSign className="text-green-500" />} label="Ingresos" value="$0.00" sub="Sin datos este Q" trend="none" />
+                <KpiCard icon={<Play className="text-yt-red" />} label="Videos" value="0" sub="0 con sponsor" />
+                <KpiCard icon={<Users className="text-blue-500" />} label="Deals" value="0" sub="$0 pendiente" />
+                <KpiCard icon={<Eye className="text-purple-500" />} label="Vistas" value="0" sub="Sin datos este mes" trend="none" />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -156,7 +125,7 @@ export default function Dashboard() {
                             <div>
                                 <p className="text-[11px] font-bold text-text-main uppercase tracking-tight">Acción Requerida</p>
                                 <p className="text-[10px] text-text-secondary mt-1">
-                                    Tienes 2 guiones pendientes de aprobación por las marcas. El deal con NordVPN vence pronto.
+                                    No tienes acciones inmediatas requeridas por parte de las marcas.
                                 </p>
                             </div>
                         </div>

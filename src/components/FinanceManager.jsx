@@ -12,11 +12,7 @@ import {
     PieChart
 } from 'lucide-react';
 
-const INVOICES = [
-    { id: 'INV-001', brand: 'NordVPN', amount: '$3,200', date: '25 Feb 2025', status: 'Paid', video: 'Review PC Gaming $800' },
-    { id: 'INV-002', brand: 'Notion', amount: '$2,200', date: '21 Feb 2025', status: 'Pending', video: '10 AI Tools 2025' },
-    { id: 'INV-003', brand: 'Skillshare', amount: '$2,800', date: '18 Feb 2025', status: 'Draft', video: 'Aprende React en 10 min' },
-];
+const INVOICES = [];
 
 export default function FinanceManager() {
     const [filter, setFilter] = useState('All');
@@ -48,27 +44,27 @@ export default function FinanceManager() {
                         <DollarSign className="text-green-500" size={24} />
                         <TrendingUp className="text-green-500" size={16} />
                     </div>
-                    <div className="text-3xl font-black font-barlow-condensed text-text-main leading-none mb-1">$24,500.00</div>
+                    <div className="text-3xl font-black font-barlow-condensed text-text-main leading-none mb-1">$0.00</div>
                     <div className="text-[10px] font-black uppercase tracking-widest text-text-tertiary">Balance Total</div>
-                    <div className="mt-4 text-[10px] text-green-500 font-bold">+12.5% vs mes pasado</div>
+                    <div className="mt-4 text-[10px] text-gray-500 font-bold">Sin actividad reciente</div>
                 </div>
 
                 <div className="glass-card p-6 bg-gradient-to-br from-blue-900/10 to-transparent">
                     <div className="flex justify-between items-center mb-4">
                         <Clock className="text-blue-500" size={24} />
                     </div>
-                    <div className="text-3xl font-black font-barlow-condensed text-text-main leading-none mb-1">$13,700.00</div>
+                    <div className="text-3xl font-black font-barlow-condensed text-text-main leading-none mb-1">$0.00</div>
                     <div className="text-[10px] font-black uppercase tracking-widest text-text-tertiary">Pendiente de Cobro</div>
-                    <div className="mt-4 text-[10px] text-blue-500 font-bold">7 Facturas activas</div>
+                    <div className="mt-4 text-[10px] text-gray-500 font-bold">0 Facturas activas</div>
                 </div>
 
                 <div className="glass-card p-6 bg-gradient-to-br from-yt-red/10 to-transparent">
                     <div className="flex justify-between items-center mb-4">
                         <CreditCard className="text-yt-red" size={24} />
                     </div>
-                    <div className="text-3xl font-black font-barlow-condensed text-text-main leading-none mb-1">$4,100.00</div>
+                    <div className="text-3xl font-black font-barlow-condensed text-text-main leading-none mb-1">$0.00</div>
                     <div className="text-[10px] font-black uppercase tracking-widest text-text-tertiary">Impuestos Estimados (VAT)</div>
-                    <div className="mt-4 text-[10px] text-yt-red font-bold">Proyección trimestral</div>
+                    <div className="mt-4 text-[10px] text-gray-500 font-bold">Sin proyección</div>
                 </div>
             </div>
 
@@ -115,8 +111,8 @@ export default function FinanceManager() {
                                     <td className="p-4 text-xs font-black text-text-main text-right font-jetbrains">{inv.amount}</td>
                                     <td className="p-4 text-center">
                                         <span className={`text-[8px] font-black uppercase px-2 py-1 rounded-full ${inv.status === 'Paid' ? 'bg-green-500/10 text-green-500' :
-                                                inv.status === 'Pending' ? 'bg-blue-500/10 text-blue-500' :
-                                                    'bg-text-tertiary/10 text-text-tertiary'
+                                            inv.status === 'Pending' ? 'bg-blue-500/10 text-blue-500' :
+                                                'bg-text-tertiary/10 text-text-tertiary'
                                             }`}>
                                             {inv.status}
                                         </span>

@@ -23,7 +23,7 @@ export default function SponsorPortal({ brandData, scriptBlocks }) {
                     <div className="flex items-center gap-2">
                         <span className="text-xs font-black uppercase tracking-widest text-text-tertiary">Portal del Patrocinador</span>
                         <span className="text-xs font-bold text-text-secondary px-2 py-0.5 bg-bg-tertiary rounded-full border border-border-subtle">
-                            {brandData?.name || 'NordVPN'}
+                            {brandData?.name || 'Nombre de la Marca'}
                         </span>
                     </div>
                 </div>
@@ -48,10 +48,10 @@ export default function SponsorPortal({ brandData, scriptBlocks }) {
                         <span className="text-text-tertiary text-xs">V2 · Actualizado hace 2 horas</span>
                     </div>
                     <h1 className="text-4xl md:text-5xl font-barlow-condensed font-black uppercase tracking-tighter leading-none">
-                        Review del Guion: <span className="text-yt-red">10 AI Tools 2025</span>
+                        Review del Guion: <span className="text-yt-red">{brandData?.campaignTitle || 'Nuevo Proyecto'}</span>
                     </h1>
                     <p className="text-text-secondary max-w-2xl text-lg leading-relaxed">
-                        Hola equipo de {brandData?.name || 'NordVPN'}. Aquí tienen la versión final del guion para revisión. Por favor, dejen su feedback en los comentarios o aprueben el contenido para proceder con la grabación.
+                        Hola equipo de {brandData?.name || 'la marca'}. Aquí tienen la versión final del guion para revisión. Por favor, dejen su feedback en los comentarios o aprueben el contenido para proceder con la grabación.
                     </p>
                 </section>
 
@@ -92,8 +92,8 @@ export default function SponsorPortal({ brandData, scriptBlocks }) {
                             <button
                                 onClick={() => setIsApproved(!isApproved)}
                                 className={`w-full py-4 rounded font-black uppercase tracking-widest text-sm transition-all flex items-center justify-center gap-2 ${isApproved
-                                        ? 'bg-green-500 text-white shadow-[0_0_20px_rgba(34,197,94,0.3)]'
-                                        : 'bg-yt-red text-white hover:bg-yt-red-dark'
+                                    ? 'bg-green-500 text-white shadow-[0_0_20px_rgba(34,197,94,0.3)]'
+                                    : 'bg-yt-red text-white hover:bg-yt-red-dark'
                                     }`}
                             >
                                 {isApproved ? <CheckCircle size={18} /> : null}
@@ -119,16 +119,18 @@ export default function SponsorPortal({ brandData, scriptBlocks }) {
                                 <Download size={16} /> Documentos y Activos
                             </h3>
                             <div className="space-y-3">
-                                {[
-                                    { name: 'Factura_FEBRERO.pdf', type: 'invoice' },
-                                    { name: 'Contrato_Signed.pdf', type: 'contract' },
-                                    { name: 'Thumb_V1_Final.jpg', type: 'image' }
-                                ].map((doc, i) => (
-                                    <div key={i} className="group flex items-center justify-between p-3 bg-bg-tertiary/20 border border-border-subtle rounded cursor-pointer hover:border-text-tertiary transition-colors">
-                                        <span className="text-[11px] font-bold text-text-secondary group-hover:text-text-main transition-colors">{doc.name}</span>
-                                        <Download size={14} className="text-text-tertiary" />
+                                {brandData?.documents?.length > 0 ? (
+                                    brandData.documents.map((doc, i) => (
+                                        <div key={i} className="group flex items-center justify-between p-3 bg-bg-tertiary/20 border border-border-subtle rounded cursor-pointer hover:border-text-tertiary transition-colors">
+                                            <span className="text-[11px] font-bold text-text-secondary group-hover:text-text-main transition-colors">{doc.name}</span>
+                                            <Download size={14} className="text-text-tertiary" />
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="p-4 border border-dashed border-border-subtle rounded text-center">
+                                        <p className="text-[10px] text-text-tertiary uppercase font-bold">Sin documentos adjuntos</p>
                                     </div>
-                                ))}
+                                )}
                             </div>
                         </div>
 

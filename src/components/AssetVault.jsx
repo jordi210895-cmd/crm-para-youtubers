@@ -10,17 +10,9 @@ import {
 } from 'lucide-react';
 
 export default function AssetVault() {
-    const folders = [
-        { name: 'B-Roll Recurrente', count: 124, icon: Folder, color: 'text-blue-500' },
-        { name: 'Logos de Marcas', count: 42, icon: Folder, color: 'text-yt-red' },
-        { name: 'Hooks Exitosos', count: 15, icon: Folder, color: 'text-yellow-500' },
-    ];
+    const folders = [];
 
-    const recentAssets = [
-        { name: 'thumbnail_v1.jpg', size: '2.4 MB', type: 'image', date: 'Hace 2 horas' },
-        { name: 'contrato_nordvpn.pdf', size: '1.1 MB', type: 'file', date: 'Ayer' },
-        { name: 'link_afiliado.txt', size: '0.1 KB', type: 'link', date: '24 Feb' },
-    ];
+    const recentAssets = [];
 
     return (
         <div className="p-8 space-y-8 animate-fade-up">
