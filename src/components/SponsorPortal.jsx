@@ -9,7 +9,7 @@ import {
     AlertCircle
 } from 'lucide-react';
 
-export default function SponsorPortal({ brandData, scriptBlocks }) {
+export default function SponsorPortal({ brandData, scriptBlocks, showToast }) {
     const [feedback, setFeedback] = useState('');
     const [isApproved, setIsApproved] = useState(false);
 
@@ -32,13 +32,16 @@ export default function SponsorPortal({ brandData, scriptBlocks }) {
                         <Lock size={14} />
                         <span className="text-[10px] font-bold uppercase tracking-tight">Acceso Seguro</span>
                     </div>
-                    <button className="yt-btn-ghost text-[10px] flex items-center gap-2">
+                    <button
+                        onClick={() => showToast("Enviando petición de soporte a tu Account Manager...", "info")}
+                        className="yt-btn-ghost text-[10px] flex items-center gap-2"
+                    >
                         <ExternalLink size={12} /> Soporte
                     </button>
                 </div>
             </header>
 
-            <main className="flex-1 max-w-5xl mx-auto w-full p-8 md:p-12 space-y-12">
+            <main className="flex-1 max-w-5xl mx-auto w-full p-4 md:p-12 space-y-8 md:space-y-12 pb-24 md:pb-12">
                 {/* Project Intro */}
                 <section className="space-y-4 animate-fade-up">
                     <div className="flex items-center gap-3">
@@ -55,9 +58,9 @@ export default function SponsorPortal({ brandData, scriptBlocks }) {
                     </p>
                 </section>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12">
                     {/* Script Viewer */}
-                    <div className="lg:col-span-2 space-y-8">
+                    <div className="lg:col-span-2 space-y-6 md:space-y-8">
                         <div className="glass-card overflow-hidden">
                             <div className="p-4 bg-bg-tertiary/30 border-b border-border-subtle flex items-center justify-between">
                                 <h3 className="text-xs font-black uppercase tracking-widest text-text-secondary flex items-center gap-2">
@@ -111,7 +114,16 @@ export default function SponsorPortal({ brandData, scriptBlocks }) {
                                 value={feedback}
                                 onChange={(e) => setFeedback(e.target.value)}
                             />
-                            <button className="yt-btn-ghost w-full">Enviar Feedback</button>
+                            <button
+                                onClick={() => {
+                                    if (!feedback) return showToast("Escribe algo antes de enviar.", "info");
+                                    setFeedback('');
+                                    showToast("¡Feedback enviado correctamente al creador!", "info");
+                                }}
+                                className="yt-btn-ghost w-full"
+                            >
+                                Enviar Feedback
+                            </button>
                         </div>
 
                         <div className="glass-card p-6">
@@ -121,7 +133,11 @@ export default function SponsorPortal({ brandData, scriptBlocks }) {
                             <div className="space-y-3">
                                 {brandData?.documents?.length > 0 ? (
                                     brandData.documents.map((doc, i) => (
-                                        <div key={i} className="group flex items-center justify-between p-3 bg-bg-tertiary/20 border border-border-subtle rounded cursor-pointer hover:border-text-tertiary transition-colors">
+                                        <div
+                                            key={i}
+                                            onClick={() => showToast(`Descargando ${doc.name}...`, "info")}
+                                            className="group flex items-center justify-between p-3 bg-bg-tertiary/20 border border-border-subtle rounded cursor-pointer hover:border-text-tertiary transition-colors"
+                                        >
                                             <span className="text-[11px] font-bold text-text-secondary group-hover:text-text-main transition-colors">{doc.name}</span>
                                             <Download size={14} className="text-text-tertiary" />
                                         </div>

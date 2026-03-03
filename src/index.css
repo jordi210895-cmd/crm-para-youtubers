@@ -107,4 +107,20 @@
   .glass-card {
     @apply bg-bg-secondary border border-border-subtle rounded transition-all hover:border-border-main;
   }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-border-main rounded;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-text-tertiary;
+  }
 }
