@@ -52,13 +52,21 @@ export default function Login() {
                     }
                 });
 
-                if (signUpError) throw signUpError;
+                if (signUpError) {
+                    // Si el error es que ya existe o fallo de trigger por duplicidad
+                    if (signUpError.message.includes('already registered') || signUpError.message.includes('saving new user')) {
+                        setError('Este correo ya tiene una cuenta. ¿Quieres intentar iniciar sesión?');
+                        // No lanzamos error para que no bloquee, solo informamos
+                        setLoading(false);
+                        return;
+                    }
+                    throw signUpError;
+                }
 
-                // Supabase note: If "Confirm Email" is OFF, 'data.session' will exist and the user is logged in.
                 if (data?.session) {
                     setSuccessMessage('¡Registro exitoso! Accediendo al Studio...');
                 } else {
-                    setSuccessMessage('¡Cuenta creada! Por favor, ve a tu bandeja de entrada (Gmail) y haz clic en el enlace de confirmación para finalizar el registro.');
+                    setSuccessMessage('¡Cuenta creada! Revisa tu email para confirmar el acceso.');
                     setIsLogin(true);
                     setEmail('');
                     setPassword('');
@@ -66,9 +74,11 @@ export default function Login() {
             }
         } catch (err) {
             console.error('Auth Error:', err);
-            setError(err.message === 'Failed to fetch'
-                ? 'Error de conexión. Verifica tu conexión a internet.'
-                : err.message);
+            let userMessage = err.message;
+            if (err.message === 'Failed to fetch') userMessage = 'Error de conexión. Verifica tu internet.';
+            if (err.message.includes('Invalid login credentials')) userMessage = 'Email o contraseña incorrectos. Revisa bien los datos.';
+
+            setError(userMessage);
         } finally {
             setLoading(false);
         }
@@ -123,9 +133,20 @@ export default function Login() {
                         </div>
 
                         {error && (
-                            <div className="p-4 bg-red-900/20 border border-red-500/50 rounded-lg flex gap-3 items-center">
-                                <AlertCircle className="text-red-500 shrink-0" size={18} />
-                                <p className="text-xs text-red-500 font-medium">{error}</p>
+                            <div className="p-4 bg-red-900/20 border border-red-500/50 rounded-lg flex flex-col gap-3">
+                                <div className="flex gap-3 items-center">
+                                    <AlertCircle className="text-red-500 shrink-0" size={18} />
+                                    <p className="text-xs text-red-500 font-medium">{error}</p>
+                                </div>
+                                {error.includes('ya tiene una cuenta') && (
+                                    <button
+                                        type="button"
+                                        onClick={() => { setIsLogin(true); setError(null); }}
+                                        className="text-[10px] font-black uppercase tracking-widest text-white bg-red-500/20 py-2 rounded hover:bg-red-500/40 transition-colors"
+                                    >
+                                        Ir a Iniciar Sesión ahora
+                                    </button>
+                                )}
                             </div>
                         )}
 
