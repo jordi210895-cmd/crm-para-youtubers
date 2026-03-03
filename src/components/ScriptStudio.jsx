@@ -114,9 +114,6 @@ export default function ScriptStudio({ video, onBack }) {
     const [aiError, setAiError] = useState(null);
 
     const generateBlockContentWithAI = async (blockId, blockType, currentText, customInstruction) => {
-        console.log("Iniciando generación con IA...");
-        console.log("API Key detectada (primeros 4 carácteres):", import.meta.env.VITE_GEMINI_API_KEY?.substring(0, 4));
-
         if (!import.meta.env.VITE_GEMINI_API_KEY) {
             setAiError('No se ha detectado la API Key de Gemini. Por favor, añádela a tu archivo .env local o en la configuración de Vercel (Environment Variables) como VITE_GEMINI_API_KEY.');
             return;
@@ -125,7 +122,6 @@ export default function ScriptStudio({ video, onBack }) {
         setIsGeneratingBlockId(blockId);
         setAiError(null);
         try {
-            console.log("Enviando petición a Gemini con el modelo: gemini-1.5-flash");
             const blockLabel = BLOCK_TYPES.find(t => t.id === blockType)?.label || blockType;
             const prompt = `
 Eres un guionista experto en YouTube.
