@@ -111,25 +111,22 @@ export default function ScriptStudio({ video, onBack }) {
     const [aiError, setAiError] = useState(null);
 
     const generateBlockContentWithAI = async (blockId, blockType, currentText, customInstruction) => {
-        const buildId = "VER-5.0-ULTRA-RESILIENT";
-        console.log(`[${buildId}] Iniciando generación con IA...`);
         const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
         if (!apiKey) {
-            setAiError('No se ha detectado la API Key de Gemini. Por favor, añádela a tu archivo .env local o en la configuración de Vercel (Environment Variables) como VITE_GEMINI_API_KEY.');
+            setAiError('No se ha detectado la API Key de Gemini. Por favor, añádela a tu configuración de Vercel (Environment Variables) como VITE_GEMINI_API_KEY.');
             return;
         }
 
         setIsGeneratingBlockId(blockId);
         setAiError(null);
 
-        // Intentaremos estos modelos en orden de probabilidad según tu lista de API Key
+        // Models to try in order of priority (Fallback system for maximum resiliency)
         const modelsToTry = ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-2.5-flash", "gemini-2.0-flash-lite"];
         let finalError = null;
 
         for (const modelName of modelsToTry) {
             try {
-                console.log(`> Probando modelo: ${modelName}`);
                 const genAI = new GoogleGenerativeAI(apiKey);
                 const model = genAI.getGenerativeModel({ model: modelName });
 
@@ -142,8 +139,8 @@ Texto actual (puede estar vacío): "${currentText || 'Vacio'}".
 ${customInstruction ? `\nInstrucción Específica del Usuario: "${customInstruction}" (Aplica esto prioritariamente)` : ''}
 
 Instrucciones:
-- Mejora o crea el contenido para que sea retentivo y profesional.
-- Devuelve ÚNICAMENTE el texto final listo para meter en el teleprompter. No añadas notas ni comillas iniciales/finales.
+- Crea contenido profesional, retentivo y adaptado al estilo de YouTube.
+- Devuelve ÚNICAMENTE el texto final del guion, sin notas adicionales.
 `;
 
                 const result = await model.generateContent(prompt);
@@ -155,17 +152,15 @@ Instrucciones:
                     setActiveAiBlockId(null);
                     setAiCustomPrompt("");
                     setAiError(null);
-                    console.log(`✅ ¡Éxito con ${modelName}!`);
-                    return; // Terminamos con éxito
+                    return; // Success!
                 }
             } catch (err) {
-                console.warn(`Fallo con ${modelName}:`, err.message);
                 finalError = err;
+                // Silently try next model
             }
         }
 
-        // Si llegamos aquí, todos fallaron
-        setAiError("Error Gemini: No se pudo conectar con ningún modelo compatible. " + (finalError?.message || ""));
+        setAiError("Error Gemini: No se pudo conectar con los modelos de IA. " + (finalError?.message || ""));
         setIsGeneratingBlockId(null);
     };
 
