@@ -111,9 +111,6 @@ export default function ScriptStudio({ video, onBack }) {
     const [aiError, setAiError] = useState(null);
 
     const generateBlockContentWithAI = async (blockId, blockType, currentText, customInstruction) => {
-        const buildId = "VER-1.2-MODEL-DISCOVERY";
-        console.log(`[${buildId}] Iniciando generación con IA...`);
-
         const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
         if (!apiKey) {
@@ -121,22 +118,9 @@ export default function ScriptStudio({ video, onBack }) {
             return;
         }
 
-        // Diagnostic: List allowed models
-        try {
-            const listResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
-            const listData = await listResponse.json();
-            if (listData.error) {
-                console.error("Error en la clave API:", listData.error.message);
-            } else {
-                console.log("Modelos permitidos para tu clave:", listData.models?.map(m => m.name.replace('models/', '')) || listData);
-            }
-        } catch (e) {
-            console.warn("No se pudo listar los modelos:", e);
-        }
-
-        // Initialize here to ensure fresh env vars
+        // Initialize Gemini with verified model
         const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
         setIsGeneratingBlockId(blockId);
         setAiError(null);
