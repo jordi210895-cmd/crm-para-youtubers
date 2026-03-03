@@ -34,8 +34,9 @@ export default function Dashboard({ onVideoSelect, showToast }) {
     const [newProjectForm, setNewProjectForm] = useState({ title: '', status: 'idea' });
 
     // Lista de videos
-    const [videosList, setVideosList] = useState([]);
-    const [isLoadingVideos, setIsLoadingVideos] = useState(true);
+    // Stats
+    [stats, setStats] = useState({ revenue: 0, videos: 0, deals: 0, views: 0 });
+    [activeDeals, setActiveDeals] = useState([]);
 
     // Gemini IA States
     const [geminiPrompt, setGeminiPrompt] = useState('');
@@ -51,16 +52,45 @@ export default function Dashboard({ onVideoSelect, showToast }) {
     const fetchVideos = async () => {
         setIsLoadingVideos(true);
         try {
+            // Fetch videos with related brand info
             const { data, error } = await supabase
                 .from('videos')
-                .select('*')
+                .select('*, brands(name, logo_url)')
                 .eq('creator_id', user.id)
                 .order('created_at', { ascending: false });
 
             if (error) throw error;
             setVideosList(data || []);
+
+            // Calculate Stats
+            const newStats = (data || []).reduce((acc, video) => {
+                acc.revenue += Number(video.revenue_deal || 0);
+                acc.videos += 1;
+                acc.views += Number(video.views_count || 0);
+                if (video.brand_id) acc.deals += 1;
+                return acc;
+            }, { revenue: 0, videos: 0, deals: 0, views: 0 });
+
+            setStats(newStats);
+
+            // Fetch Deals for Pipeline (Videos with Brand)
+            const deals = (data || [])
+                .filter(v => v.brand_id)
+                .map(v => ({
+                    brand: v.brands?.name || 'Marca Desconocida',
+                    logo: (v.brands?.name || 'M').substring(0, 1),
+                    logoColor: 'text-yt-red',
+                    stage: v.status === 'published' ? 'Cobrado' :
+                        v.status === 'idea' ? 'Negociando' : 'Producción',
+                    deal: `$${v.revenue_deal || 0}`,
+                    urgent: v.is_urgent,
+                    id: v.id
+                }));
+            setActiveDeals(deals);
+
         } catch (error) {
             console.error("Error cargando videos:", error);
+            if (showToast) showToast("Error al cargar datos del Dashboard", "error");
         } finally {
             setIsLoadingVideos(false);
         }
@@ -174,10 +204,10 @@ export default function Dashboard({ onVideoSelect, showToast }) {
 
             {/* KPI Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <KpiCard icon={<DollarSign className="text-green-500" />} label="Ingresos" value="$0.00" sub="Sin datos este Q" trend="none" />
-                <KpiCard icon={<Play className="text-yt-red" />} label="Videos" value="0" sub="0 con sponsor" />
-                <KpiCard icon={<Users className="text-blue-500" />} label="Deals" value="0" sub="$0 pendiente" />
-                <KpiCard icon={<Eye className="text-purple-500" />} label="Vistas" value="0" sub="Sin datos este mes" trend="none" />
+                <KpiCard icon={<DollarSign className="text-green-500" />} label="Ingresos" value={`$${stats.revenue.toLocaleString()}`} sub="Presupuesto total en deals" trend="none" />
+                <KpiCard icon={<Play className="text-yt-red" />} label="Videos" value={stats.videos.toString()} sub={`${stats.deals} con sponsor`} />
+                <KpiCard icon={<Users className="text-blue-500" />} label="Deals" value={stats.deals.toString()} sub="Acuerdos comerciales" />
+                <KpiCard icon={<Eye className="text-purple-500" />} label="Vistas" value={stats.views.toLocaleString()} sub="Impacto total acumulado" trend="none" />
             </div>
 
             {/* Asistente IA Gemini */}
@@ -294,13 +324,17 @@ export default function Dashboard({ onVideoSelect, showToast }) {
                         <Users size={12} /> Pipeline de Sponsors
                     </div>
                     <div className="glass-card divide-y divide-border-subtle">
-                        {DEALS.length === 0 ? (
+                        {activeDeals.length === 0 ? (
                             <div className="p-8 text-center">
                                 <p className="text-text-tertiary text-[10px] uppercase font-black tracking-widest">Sin sponsors en negociación</p>
                             </div>
                         ) : (
-                            DEALS.map((deal, i) => (
-                                <div key={i} className="p-4 flex items-center gap-4 hover:bg-bg-tertiary/20 transition-colors cursor-pointer group">
+                            activeDeals.map((deal, i) => (
+                                <div
+                                    key={i}
+                                    onClick={() => onVideoSelect({ id: deal.id })}
+                                    className="p-4 flex items-center gap-4 hover:bg-bg-tertiary/20 transition-colors cursor-pointer group"
+                                >
                                     <div className={`w-10 h-10 rounded border border-border-subtle bg-bg-tertiary flex items-center justify-center font-black ${deal.logoColor}`}>
                                         {deal.logo}
                                     </div>
