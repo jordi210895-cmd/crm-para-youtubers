@@ -16,8 +16,8 @@ import { supabase } from '../lib/supabase';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Initialize Gemini API
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyAaSPpqYDdz9KwVtacPP0mSDmKR08sQ54A');
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); // Use 1.5-flash as default stable version
 
 const BLOCK_TYPES = [
     { id: 'hook', label: 'Gancho', color: 'border-l-yt-red' },
@@ -114,8 +114,8 @@ export default function ScriptStudio({ video, onBack }) {
     const [aiError, setAiError] = useState(null);
 
     const generateBlockContentWithAI = async (blockId, blockType, currentText, customInstruction) => {
-        if (!import.meta.env.VITE_GEMINI_API_KEY && !genAI.apiKey) {
-            setAiError('Configura la API Key de Gemini en el archivo .env primero.');
+        if (!import.meta.env.VITE_GEMINI_API_KEY) {
+            setAiError('No se ha detectado la API Key de Gemini. Por favor, añádela a tu archivo .env local o en la configuración de Vercel (Environment Variables) como VITE_GEMINI_API_KEY.');
             return;
         }
 
