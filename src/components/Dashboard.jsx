@@ -34,9 +34,11 @@ export default function Dashboard({ onVideoSelect, showToast }) {
     const [newProjectForm, setNewProjectForm] = useState({ title: '', status: 'idea' });
 
     // Lista de videos
+    const [videosList, setVideosList] = useState([]);
+    const [isLoadingVideos, setIsLoadingVideos] = useState(true);
     // Stats
-    [stats, setStats] = useState({ revenue: 0, videos: 0, deals: 0, views: 0 });
-    [activeDeals, setActiveDeals] = useState([]);
+    const [stats, setStats] = useState({ revenue: 0, videos: 0, deals: 0, views: 0 });
+    const [activeDeals, setActiveDeals] = useState([]);
 
     // Gemini IA States
     const [geminiPrompt, setGeminiPrompt] = useState('');
