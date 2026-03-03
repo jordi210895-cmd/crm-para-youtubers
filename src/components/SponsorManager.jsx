@@ -12,8 +12,9 @@ import {
     DollarSign
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-
+import { useAuth } from '../contexts/AuthContext';
 export default function SponsorManager({ showToast }) {
+    const { user } = useAuth();
     const [brands, setBrands] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -21,15 +22,19 @@ export default function SponsorManager({ showToast }) {
     const [isCreating, setIsCreating] = useState(false);
 
     useEffect(() => {
-        fetchBrands();
-    }, []);
+        if (user) {
+            fetchBrands();
+        }
+    }, [user]);
 
     const fetchBrands = async () => {
+        if (!user) return;
         setLoading(true);
         try {
             const { data, error } = await supabase
                 .from('brands')
                 .select('*')
+                .eq('creator_id', user.id)
                 .order('name');
             if (error) throw error;
             setBrands(data || []);
@@ -47,7 +52,7 @@ export default function SponsorManager({ showToast }) {
         try {
             const { error } = await supabase
                 .from('brands')
-                .insert([newBrand]);
+                .insert([{ ...newBrand, creator_id: user.id }]);
             if (error) throw error;
 
             showToast('¡Marca añadida con éxito!', 'success');
