@@ -111,6 +111,8 @@ export default function ScriptStudio({ video, onBack }) {
     const [aiError, setAiError] = useState(null);
 
     const generateBlockContentWithAI = async (blockId, blockType, currentText, customInstruction) => {
+        const buildId = "VER-3.0-FORCE";
+        console.log(`[${buildId}] Iniciando generación con IA...`);
         const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
         if (!apiKey) {
