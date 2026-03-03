@@ -147,6 +147,8 @@ Instrucciones:
             alert("Error al generar texto con IA. Revisa la consola para más detalles.");
         } finally {
             setIsGeneratingBlockId(null);
+            setActiveAiBlockId(null);
+            setAiCustomPrompt("");
         }
     };
 
