@@ -118,7 +118,7 @@ export default function ScriptStudio({ video, onBack }) {
             return;
         }
 
-        // Initialize Gemini with verified model
+        // Initialize Gemini with verified stable model
         const genAI = new GoogleGenerativeAI(apiKey);
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
