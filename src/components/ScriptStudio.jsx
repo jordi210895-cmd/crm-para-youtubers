@@ -144,7 +144,7 @@ Instrucciones:
             }
         } catch (error) {
             console.error("Error generando texto con AI:", error);
-            alert("Error al generar texto con IA. Revisa la consola para más detalles.");
+            alert("Error Gemini: " + (error.message || "Error desconocido. Revisa la consola."));
         } finally {
             setIsGeneratingBlockId(null);
             setActiveAiBlockId(null);
