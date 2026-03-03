@@ -111,7 +111,7 @@ export default function ScriptStudio({ video, onBack }) {
     const [aiError, setAiError] = useState(null);
 
     const generateBlockContentWithAI = async (blockId, blockType, currentText, customInstruction) => {
-        const buildId = "VER-4.0-FALLBACK";
+        const buildId = "VER-5.0-ULTRA-RESILIENT";
         console.log(`[${buildId}] Iniciando generación con IA...`);
         const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
@@ -123,8 +123,8 @@ export default function ScriptStudio({ video, onBack }) {
         setIsGeneratingBlockId(blockId);
         setAiError(null);
 
-        // Intentaremos estos modelos en orden hasta que uno funcione
-        const modelsToTry = ["gemini-1.5-flash", "gemini-pro", "gemini-2.5-flash"];
+        // Intentaremos estos modelos en orden de probabilidad según tu lista de API Key
+        const modelsToTry = ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-2.5-flash", "gemini-2.0-flash-lite"];
         let finalError = null;
 
         for (const modelName of modelsToTry) {
