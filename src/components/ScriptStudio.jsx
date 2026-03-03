@@ -17,7 +17,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Initialize Gemini API
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); // Use 1.5-flash as default stable version
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 const BLOCK_TYPES = [
     { id: 'hook', label: 'Gancho', color: 'border-l-yt-red' },
