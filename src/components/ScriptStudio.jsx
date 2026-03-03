@@ -109,8 +109,10 @@ export default function ScriptStudio({ video, onBack }) {
     };
 
     const [isGeneratingBlockId, setIsGeneratingBlockId] = useState(null);
+    const [activeAiBlockId, setActiveAiBlockId] = useState(null); // Which block's AI menu is open
+    const [aiCustomPrompt, setAiCustomPrompt] = useState("");
 
-    const generateBlockContentWithAI = async (blockId, blockType, currentText) => {
+    const generateBlockContentWithAI = async (blockId, blockType, currentText, customInstruction) => {
         if (!import.meta.env.VITE_GEMINI_API_KEY && !genAI.apiKey) {
             alert('Configura la API Key de Gemini en el archivo .env primero.');
             return;
@@ -124,6 +126,7 @@ Eres un guionista experto en YouTube.
 El título del video es: "${video.title}".
 Tu tarea es redactar o mejorar el contenido del bloque de guion de tipo: "${blockLabel}".
 Texto actual (puede estar vacío): "${currentText || 'Vacio'}".
+${customInstruction ? `\nInstrucción Específica del Usuario: "${customInstruction}" (Aplica esto prioritariamente)` : ''}
 
 Instrucciones:
 - Si el texto actual está vacío, crea un contenido excelente desde cero para este bloque.
@@ -240,18 +243,42 @@ Instrucciones:
                                             <span className="text-[10px] font-black uppercase tracking-widest text-text-tertiary">{typeInfo.label}</span>
                                             <span className="text-[10px] font-jetbrains font-bold text-yt-red bg-yt-red/10 px-1.5 rounded">{formatTime(block.time)}</span>
                                         </div>
-                                        <div className="flex items-center gap-2">
+                                        <div className="flex items-center gap-2 relative">
+                                            {/* AI Settings Popover */}
+                                            {activeAiBlockId === block.id && (
+                                                <div className="absolute right-0 top-10 mt-2 w-72 bg-bg-secondary border border-border-subtle rounded-lg shadow-xl p-4 z-50 animate-fade-in">
+                                                    <div className="flex justify-between items-center mb-3">
+                                                        <h4 className="text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 text-blue-400">
+                                                            <Sparkles size={12} /> Instrucciones para IA
+                                                        </h4>
+                                                        <button onClick={() => setActiveAiBlockId(null)} className="text-text-tertiary hover:text-yt-red">
+                                                            <X size={14} />
+                                                        </button>
+                                                    </div>
+                                                    <textarea
+                                                        className="w-full h-20 bg-bg-tertiary/20 border border-border-subtle rounded p-2 text-xs text-text-main focus:border-blue-400 focus:outline-none resize-none placeholder:text-text-tertiary/50 mb-3"
+                                                        placeholder="Ej: Escríbelo con tono de misterio. Hazlo más gracioso. Enfócate en la curiosidad..."
+                                                        value={aiCustomPrompt}
+                                                        onChange={(e) => setAiCustomPrompt(e.target.value)}
+                                                    />
+                                                    <div className="flex gap-2">
+                                                        <button
+                                                            onClick={() => generateBlockContentWithAI(block.id, block.type, block.text, aiCustomPrompt)}
+                                                            disabled={isGeneratingBlockId === block.id}
+                                                            className="flex-1 bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-bold uppercase tracking-wider py-2 rounded flex items-center justify-center gap-2 disabled:opacity-50 transition-colors"
+                                                        >
+                                                            {isGeneratingBlockId === block.id ? <Loader2 size={12} className="animate-spin" /> : <Sparkles size={12} />}
+                                                            Generar
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            )}
                                             <button
-                                                onClick={() => generateBlockContentWithAI(block.id, block.type, block.text)}
-                                                disabled={isGeneratingBlockId === block.id}
-                                                className="opacity-0 group-hover:opacity-100 transition-opacity text-blue-400 hover:text-blue-300 disabled:opacity-50 flex items-center gap-1 bg-blue-500/10 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider"
+                                                onClick={() => activeAiBlockId === block.id ? setActiveAiBlockId(null) : setActiveAiBlockId(block.id)}
+                                                className="opacity-0 group-hover:opacity-100 transition-opacity text-blue-400 hover:text-blue-300 flex items-center gap-1 bg-blue-500/10 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider"
                                                 title="Generar o Mejorar con IA"
                                             >
-                                                {isGeneratingBlockId === block.id ? (
-                                                    <Loader2 size={12} className="animate-spin" />
-                                                ) : (
-                                                    <Sparkles size={12} />
-                                                )}
+                                                <Sparkles size={12} />
                                                 <span className="hidden md:inline">IA</span>
                                             </button>
                                             <button
