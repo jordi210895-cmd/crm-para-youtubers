@@ -111,16 +111,31 @@ export default function ScriptStudio({ video, onBack }) {
     const [aiError, setAiError] = useState(null);
 
     const generateBlockContentWithAI = async (blockId, blockType, currentText, customInstruction) => {
-        const buildId = "VER-1.1-MODEL-FETCH";
+        const buildId = "VER-1.2-MODEL-DISCOVERY";
         console.log(`[${buildId}] Iniciando generación con IA...`);
 
-        if (!import.meta.env.VITE_GEMINI_API_KEY) {
+        const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+
+        if (!apiKey) {
             setAiError('No se ha detectado la API Key de Gemini. Por favor, añádela a tu archivo .env local o en la configuración de Vercel (Environment Variables) como VITE_GEMINI_API_KEY.');
             return;
         }
 
+        // Diagnostic: List allowed models
+        try {
+            const listResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+            const listData = await listResponse.json();
+            if (listData.error) {
+                console.error("Error en la clave API:", listData.error.message);
+            } else {
+                console.log("Modelos permitidos para tu clave:", listData.models?.map(m => m.name.replace('models/', '')) || listData);
+            }
+        } catch (e) {
+            console.warn("No se pudo listar los modelos:", e);
+        }
+
         // Initialize here to ensure fresh env vars
-        const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
+        const genAI = new GoogleGenerativeAI(apiKey);
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
         setIsGeneratingBlockId(blockId);
