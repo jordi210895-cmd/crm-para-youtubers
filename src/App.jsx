@@ -18,6 +18,7 @@ import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import ScriptStudio from './components/ScriptStudio';
 import SponsorPortal from './components/SponsorPortal';
+import SponsorManager from './components/SponsorManager';
 import AssetVault from './components/AssetVault';
 import BrainstormCanvas from './components/BrainstormCanvas';
 import FinanceManager from './components/FinanceManager';
@@ -71,7 +72,7 @@ export default function App() {
           showToast={showToast}
         />;
       case 'sponsors':
-        return <SponsorPortal scriptBlocks={[]} showToast={showToast} />;
+        return <SponsorManager showToast={showToast} />;
       case 'finance':
         return <FinanceManager showToast={showToast} />;
       case 'assets':
