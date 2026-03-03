@@ -114,10 +114,17 @@ export default function ScriptStudio({ video, onBack }) {
     const [aiError, setAiError] = useState(null);
 
     const generateBlockContentWithAI = async (blockId, blockType, currentText, customInstruction) => {
+        const buildId = "VER-1.1-MODEL-FETCH";
+        console.log(`[${buildId}] Iniciando generación con IA...`);
+
         if (!import.meta.env.VITE_GEMINI_API_KEY) {
             setAiError('No se ha detectado la API Key de Gemini. Por favor, añádela a tu archivo .env local o en la configuración de Vercel (Environment Variables) como VITE_GEMINI_API_KEY.');
             return;
         }
+
+        // Initialize here to ensure fresh env vars
+        const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
         setIsGeneratingBlockId(blockId);
         setAiError(null);
