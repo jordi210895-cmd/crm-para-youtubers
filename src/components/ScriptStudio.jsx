@@ -9,9 +9,15 @@ import {
     X,
     Maximize2,
     ArrowLeft,
-    Loader2
+    Loader2,
+    Sparkles
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
+// Initialize Gemini API
+const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyAaSPpqYDdz9KwVtacPP0mSDmKR08sQ54A');
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 const BLOCK_TYPES = [
     { id: 'hook', label: 'Gancho', color: 'border-l-yt-red' },
@@ -100,6 +106,45 @@ export default function ScriptStudio({ video, onBack }) {
             }
             return b;
         }));
+    };
+
+    const [isGeneratingBlockId, setIsGeneratingBlockId] = useState(null);
+
+    const generateBlockContentWithAI = async (blockId, blockType, currentText) => {
+        if (!import.meta.env.VITE_GEMINI_API_KEY && !genAI.apiKey) {
+            alert('Configura la API Key de Gemini en el archivo .env primero.');
+            return;
+        }
+
+        setIsGeneratingBlockId(blockId);
+        try {
+            const blockLabel = BLOCK_TYPES.find(t => t.id === blockType)?.label || blockType;
+            const prompt = `
+Eres un guionista experto en YouTube.
+El título del video es: "${video.title}".
+Tu tarea es redactar o mejorar el contenido del bloque de guion de tipo: "${blockLabel}".
+Texto actual (puede estar vacío): "${currentText || 'Vacio'}".
+
+Instrucciones:
+- Si el texto actual está vacío, crea un contenido excelente desde cero para este bloque.
+- Si hay texto actual, mejóralo, hazlo más atrapante, retentivo y profesional para YouTube.
+- Adapta el tono al estándar de videos de alto rendimiento.
+- El 'Hook' (Gancho) debe capturar la atención en los primeros 5 segundos.
+- Devuelve **ÚNICAMENTE** el texto final listo para meter en el teleprompter. No añadas notas ni comillas iniciales/finales, solo el guion que se va a narrar.
+`;
+            const result = await model.generateContent(prompt);
+            const aiText = result.response.text();
+
+            // Reemplaza el texto con el generado
+            if (aiText) {
+                updateBlock(blockId, 'text', aiText.trim());
+            }
+        } catch (error) {
+            console.error("Error generando texto con AI:", error);
+            alert("Error al generar texto con IA. Revisa la consola para más detalles.");
+        } finally {
+            setIsGeneratingBlockId(null);
+        }
     };
 
     const addBlock = (type) => {
@@ -195,12 +240,27 @@ export default function ScriptStudio({ video, onBack }) {
                                             <span className="text-[10px] font-black uppercase tracking-widest text-text-tertiary">{typeInfo.label}</span>
                                             <span className="text-[10px] font-jetbrains font-bold text-yt-red bg-yt-red/10 px-1.5 rounded">{formatTime(block.time)}</span>
                                         </div>
-                                        <button
-                                            onClick={() => deleteBlock(block.id)}
-                                            className="opacity-0 group-hover:opacity-100 transition-opacity text-text-tertiary hover:text-yt-red"
-                                        >
-                                            <X size={14} />
-                                        </button>
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                onClick={() => generateBlockContentWithAI(block.id, block.type, block.text)}
+                                                disabled={isGeneratingBlockId === block.id}
+                                                className="opacity-0 group-hover:opacity-100 transition-opacity text-blue-400 hover:text-blue-300 disabled:opacity-50 flex items-center gap-1 bg-blue-500/10 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider"
+                                                title="Generar o Mejorar con IA"
+                                            >
+                                                {isGeneratingBlockId === block.id ? (
+                                                    <Loader2 size={12} className="animate-spin" />
+                                                ) : (
+                                                    <Sparkles size={12} />
+                                                )}
+                                                <span className="hidden md:inline">IA</span>
+                                            </button>
+                                            <button
+                                                onClick={() => deleteBlock(block.id)}
+                                                className="opacity-0 group-hover:opacity-100 transition-opacity text-text-tertiary hover:text-yt-red"
+                                            >
+                                                <X size={14} />
+                                            </button>
+                                        </div>
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-3 divide-x divide-border-subtle">
                                         <div className="md:col-span-2 p-0">
